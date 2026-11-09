@@ -1,7 +1,7 @@
 import express from "express";
-import User from "../models/user.model";
+import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
-import { createAccessToken, createRefreshToken } from "../utils/auth.util";
+import { createAccessToken, createRefreshToken } from "../utils/auth.util.js";
 
 export const registerUser = async(req,res) => {
     try{
@@ -36,8 +36,20 @@ export const registerUser = async(req,res) => {
 
         const refreshToken = createRefreshToken({userId:user._id,role:user.role});
 
+        res.cookie("refreshToken",refreshToken, {
+            httpOnly: true
+        })
+
        res.status(201).json({
-           success:true,
+           message:"User Registered Successfully",
+           data:{
+              user:{
+                 name:user.name,
+                 email:user.email,
+                 id:user._id
+              },
+              accessToken
+           }
            
        })
        
